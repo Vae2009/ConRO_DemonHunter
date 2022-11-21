@@ -175,7 +175,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 		local _, _Disrupt_RANGE = ConRO:Targets(Ability.Disrupt);
 	local _EyeBeam, _EyeBeam_RDY = ConRO:AbilityReady(Ability.EyeBeam, timeShift);
 	local _FelRush, _FelRush_RDY, _FelRush_CD = ConRO:AbilityReady(Ability.FelRush, timeShift);
-		local _FelRush_CHARGES, _, _FelRush_CCD = ConRO:SpellCharges(Ability.FelRush);
+		local _FelRush_CHARGES, _, _FelRush_CCD = ConRO:SpellCharges(_FelRush);
 		local _Momentum_BUFF = ConRO:Aura(Buff.Momentum, timeShift);
 		local _InnerDemon_BUFF = ConRO:Form(Buff.InnerDemon);
 	local _ImmolationAura, _ImmolationAura_RDY = ConRO:AbilityReady(Ability.ImmolationAura, timeShift);

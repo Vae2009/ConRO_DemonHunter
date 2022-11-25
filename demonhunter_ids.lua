@@ -159,6 +159,7 @@ local ConRO_DemonHunter, ids = ...;
 	}
 	ids.Havoc_Buff = {
 		ChaosBlades = 247938,
+		Initiative = 391215,
 		InnerDemon = 337313,
 		Metamorphosis = 162264,
 		Momentum = 208628,
@@ -187,7 +188,7 @@ local ConRO_DemonHunter, ids = ...;
 		SigilofMisery = {spellID = 207684, talentID = 112859},
 		SpectralSight = {spellID = 188501},
 		TheHunt = {spellID = 370965, talentID = 112837},
-		ThrowGlaive = {spellID = 185123},
+		ThrowGlaive = {spellID = 204157},
 		Torment = {spellID = 185245},
 		VengefulRetreat = {spellID = 198793, talentID = 112853},
 	--Vengeance

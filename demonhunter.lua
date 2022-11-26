@@ -376,7 +376,7 @@ function ConRO.DemonHunter.HavocDef(_, timeShift, currentSpell, gcd, tChosen, pv
 			tinsert(ConRO.SuggestedDefSpells, _Netherwalk);
 		end
 
-		if _Blur_RDY and _Player_Percent_Health <= 75 then
+		if _Blur_RDY then
 			tinsert(ConRO.SuggestedDefSpells, _Blur);
 		end
 	return nil;

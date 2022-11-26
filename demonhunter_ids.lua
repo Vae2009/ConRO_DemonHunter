@@ -182,7 +182,7 @@ local ConRO_DemonHunter, ids = ...;
 		Glide = {spellID = 131347},
 		ImmolationAura = {spellID = 258920},
 		Imprison = {spellID = 217832, talentID = 112927},
-		Metamorphosis = {spellID = 191427},
+		Metamorphosis = {spellID = 187827},
 		SigilofFlame = {spellID = 204596, talentID = 112854},
 			SigilofFlameCS = {spellID = 204513, talentID = 112854},		
 		SigilofMisery = {spellID = 207684, talentID = 112859},

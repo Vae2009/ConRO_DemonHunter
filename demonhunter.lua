@@ -215,6 +215,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 	ConRO:AbilityMovement(_FelRush, _FelRush_RDY and not _target_in_melee);
 	ConRO:AbilityMovement(_Felblade, _Felblade_RDY and _Felblade_RANGE and not _target_in_melee);
 
+	ConRO:AbilityBurst(_VengefulRetreat, _VengefulRetreat_RDY and tChosen[Passive.Initiative.talentID] and not _Initiative_BUFF and ConRO:BurstMode(_VengefulRetreat, 120));
 	ConRO:AbilityBurst(_Metamorphosis, _Metamorphosis_RDY and not _Metamorphosis_BUFF and not _EyeBeam_RDY and _Fury >= 100 and ConRO:BurstMode(_Metamorphosis));
 	ConRO:AbilityBurst(_FelBarrage, _FelBarrage_RDY and _Disrupt_RANGE and ConRO:BurstMode(_FelBarrage));
 
@@ -267,7 +268,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 			_EyeBeam_RDY = false;
 		end
 
-		if _VengefulRetreat_RDY and tChosen[Passive.Initiative.talentID] and not _Initiative_BUFF then
+		if _VengefulRetreat_RDY and tChosen[Passive.Initiative.talentID] and not _Initiative_BUFF and ConRO:FullMode(_VengefulRetreat, 120) then
 			tinsert(ConRO.SuggestedSpells, _VengefulRetreat);
 			_VengefulRetreat_RDY = false;
 		end

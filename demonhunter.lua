@@ -145,7 +145,7 @@ end
 
 function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedSpells)
-	local Racial, Ability, Passive, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Havoc_Ability, ids.Havoc_Passive, ids.Havoc_Form, ids.Havoc_Buff, ids.Havoc_Debuff, ids.Havoc_PetAbility, ids.Havoc_PvPTalent, ids.Glyph;
+	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Havoc_Ability, ids.Havoc_Form, ids.Havoc_Buff, ids.Havoc_Debuff, ids.Havoc_PetAbility, ids.Havoc_PvPTalent, ids.Glyph;
 --Info
 	local _Player_Level = UnitLevel("player");
 	local _Player_Percent_Health = ConRO:PercentHealth('player');
@@ -174,7 +174,6 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 	local _Disrupt, _Disrupt_RDY = ConRO:AbilityReady(Ability.Disrupt, timeShift);
 		local _, _Disrupt_RANGE = ConRO:Targets(Ability.Disrupt);
 	local _ElysianDecree, _ElysianDecree_RDY = ConRO:AbilityReady(Ability.ElysianDecree, timeShift);
-	local _ElysianDecreeCS, _ElysianDecreeCS_RDY = ConRO:AbilityReady(Ability.ElysianDecreeCS, timeShift);
 	local _ElysianDecreePS, _ElysianDecreePS_RDY = ConRO:AbilityReady(Ability.ElysianDecreePS, timeShift);
 	local _EssenceBreak, _EssenceBreak_RDY, _EssenceBreak_CD = ConRO:AbilityReady(Ability.EssenceBreak, timeShift);
 		local _EssenceBreak_DEBUFF = ConRO:TargetAura(Debuff.EssenceBreak, timeShift);
@@ -192,7 +191,6 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 	local _Metamorphosis, _Metamorphosis_RDY, _Metamorphosis_CD = ConRO:AbilityReady(Ability.Metamorphosis, timeShift);
 		local _Metamorphosis_BUFF, _, _Metamorphosis_DUR = ConRO:Aura(Buff.Metamorphosis, timeShift);
 	local _SigilofFlame, _SigilofFlame_RDY = ConRO:AbilityReady(Ability.SigilofFlame, timeShift);
-	local _SigilofFlameCS, _SigilofFlameCS_RDY = ConRO:AbilityReady(Ability.SigilofFlameCS, timeShift);
 	local _SigilofFlamePS, _SigilofFlamePS_RDY = ConRO:AbilityReady(Ability.SigilofFlamePS, timeShift);
 	local _ThrowGlaive, _ThrowGlaive_RDY = ConRO:AbilityReady(Ability.ThrowGlaive, timeShift);
 		local _ThrowGlaive_CHARGES = ConRO:SpellCharges(_ThrowGlaive);
@@ -216,14 +214,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 			_BladeDance = _DeathSweep;
 		end
 
-		if tChosen[Passive.ConcentratedSigils.talentID] then
-			_SigilofFlame_RDY = _SigilofFlameCS_RDY;
-			_SigilofFlame = _SigilofFlameCS;
-			_ElysianDecree_RDY = _ElysianDecreeCS_RDY;
-			_ElysianDecree = _ElysianDecreeCS;
-		end
-
-		if tChosen[Passive.PreciseSigils.talentID] then
+		if tChosen[Ability.PreciseSigils.talentID] then
 			_SigilofFlame_RDY = _SigilofFlamePS_RDY;
 			_SigilofFlame = _SigilofFlamePS;
 			_ElysianDecree_RDY = _ElysianDecreePS_RDY;
@@ -237,7 +228,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 	ConRO:AbilityMovement(_FelRush, _FelRush_RDY and not _target_in_melee);
 	ConRO:AbilityMovement(_Felblade, _Felblade_RDY and _Felblade_RANGE and not _target_in_melee);
 
-	ConRO:AbilityBurst(_VengefulRetreat, _VengefulRetreat_RDY and tChosen[Passive.Initiative.talentID] and not _Initiative_BUFF and ConRO:BurstMode(_VengefulRetreat, 120));
+	ConRO:AbilityBurst(_VengefulRetreat, _VengefulRetreat_RDY and tChosen[Ability.Initiative.talentID] and not _Initiative_BUFF and ConRO:BurstMode(_VengefulRetreat, 120));
 	ConRO:AbilityBurst(_Metamorphosis, _Metamorphosis_RDY and not _Metamorphosis_BUFF and not _EyeBeam_RDY and _Fury >= 100 and ConRO:BurstMode(_Metamorphosis));
 	ConRO:AbilityBurst(_FelBarrage, _FelBarrage_RDY and _Disrupt_RANGE and ConRO:BurstMode(_FelBarrage));
 
@@ -300,7 +291,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 			_EyeBeam_RDY = false;
 		end
 
-		if _VengefulRetreat_RDY and tChosen[Passive.Initiative.talentID] and not _Initiative_BUFF and (not tChosen[Ability.EssenceBreak.talentID] or (tChosen[Ability.EssenceBreak.talentID] and (_EssenceBreak_RDY or _EssenceBreak_CD > 10))) and ConRO:FullMode(_VengefulRetreat, 120) then
+		if _VengefulRetreat_RDY and tChosen[Ability.Initiative.talentID] and not _Initiative_BUFF and (not tChosen[Ability.EssenceBreak.talentID] or (tChosen[Ability.EssenceBreak.talentID] and (_EssenceBreak_RDY or _EssenceBreak_CD > 10))) and ConRO:FullMode(_VengefulRetreat, 120) then
 			tinsert(ConRO.SuggestedSpells, _VengefulRetreat);
 			_VengefulRetreat_RDY = false;
 		end
@@ -330,7 +321,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 			_Fury = _Fury - 40;
 		end
 
-		if _ThrowGlaive_RDY and _ThrowGlaive_RANGE and _ThrowGlaive_CHARGES == 2 and tChosen[Passive.FuriousThrows.talentID] then
+		if _ThrowGlaive_RDY and _ThrowGlaive_RANGE and _ThrowGlaive_CHARGES == 2 and tChosen[Ability.FuriousThrows.talentID] then
 			tinsert(ConRO.SuggestedSpells, _ThrowGlaive);
 			_ThrowGlaive_CHARGES = _ThrowGlaive_CHARGES - 1;
 		end
@@ -345,7 +336,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 			_UnboundChaos_BUFF = false;
 		end
 
-		if _ThrowGlaive_RDY and _ThrowGlaive_RANGE and tChosen[Passive.FuriousThrows.talentID] then
+		if _ThrowGlaive_RDY and _ThrowGlaive_RANGE and tChosen[Ability.FuriousThrows.talentID] then
 			tinsert(ConRO.SuggestedSpells, _ThrowGlaive);
 			_ThrowGlaive_CHARGES = _ThrowGlaive_CHARGES - 1;
 		end
@@ -359,7 +350,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 			_Fury = _Fury - 40;
 		end
 
-		if _FelRush_RDY and tChosen[Passive.Momentum.talentID] and not _Momentum_BUFF then
+		if _FelRush_RDY and tChosen[Ability.Momentum.talentID] and not _Momentum_BUFF then
 			tinsert(ConRO.SuggestedSpells, _FelRush);
 			_FelRush_RDY = false;
 		end
@@ -369,7 +360,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 			_SigilofFlame_RDY = false;
 		end
 
-		if _DemonsBite_RDY and not tChosen[Passive.DemonBlades.talentID] then
+		if _DemonsBite_RDY and not tChosen[Ability.DemonBlades.talentID] then
 			tinsert(ConRO.SuggestedSpells, _DemonsBite);
 		end
 
@@ -391,7 +382,7 @@ end
 
 function ConRO.DemonHunter.HavocDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedDefSpells)
-	local Racial, Ability, Passive, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Havoc_Ability, ids.Havoc_Passive, ids.Havoc_Form, ids.Havoc_Buff, ids.Havoc_Debuff, ids.Havoc_PetAbility, ids.Havoc_PvPTalent, ids.Glyph;
+	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Havoc_Ability, ids.Havoc_Form, ids.Havoc_Buff, ids.Havoc_Debuff, ids.Havoc_PetAbility, ids.Havoc_PvPTalent, ids.Glyph;
 --Info
 	local _Player_Level	= UnitLevel("player");
 	local _Player_Percent_Health = ConRO:PercentHealth('player');
@@ -429,7 +420,7 @@ end
 
 function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedSpells)
-	local Racial, Ability, Passive, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Ven_Ability, ids.Ven_Passive, ids.Ven_Form, ids.Ven_Buff, ids.Ven_Debuff, ids.Ven_PetAbility, ids.Ven_PvPTalent, ids.Glyph;
+	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Ven_Ability, ids.Ven_Form, ids.Ven_Buff, ids.Ven_Debuff, ids.Ven_PetAbility, ids.Ven_PvPTalent, ids.Glyph;
 --Info
 	local _Player_Level	= UnitLevel("player");
 	local _Player_Percent_Health = ConRO:PercentHealth('player');
@@ -453,7 +444,6 @@ function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, p
 	local _ConsumeMagic, _ConsumeMagic_RDY = ConRO:AbilityReady(Ability.ConsumeMagic, timeShift);
 	local _Disrupt, _Disrupt_RDY = ConRO:AbilityReady(Ability.Disrupt, timeShift);
 	local _ElysianDecree, _ElysianDecree_RDY = ConRO:AbilityReady(Ability.ElysianDecree, timeShift);
-	local _ElysianDecreeCS, _ElysianDecreeCS_RDY = ConRO:AbilityReady(Ability.ElysianDecreeCS, timeShift);
 	local _ElysianDecreePS, _ElysianDecreePS_RDY = ConRO:AbilityReady(Ability.ElysianDecreePS, timeShift);
 	local _FelDevastation, _FelDevastation_RDY = ConRO:AbilityReady(Ability.FelDevastation, timeShift);
 	local _Felblade, _Felblade_RDY = ConRO:AbilityReady(Ability.Felblade, timeShift);
@@ -469,7 +459,6 @@ function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, p
 		local _Metamorphosis_BUFF = ConRO:Aura(Buff.Metamorphosis, timeShift);
 	local _Shear, _Shear_RDY = ConRO:AbilityReady(Ability.Shear, timeShift);
 	local _SigilofFlame, _SigilofFlame_RDY = ConRO:AbilityReady(Ability.SigilofFlame, timeShift);
-	local _SigilofFlameCS, _SigilofFlameCS_RDY = ConRO:AbilityReady(Ability.SigilofFlameCS, timeShift);
 	local _SigilofFlamePS, _SigilofFlamePS_RDY = ConRO:AbilityReady(Ability.SigilofFlamePS, timeShift);
 		local _SigilofFlame_DEBUFF = ConRO:TargetAura(Debuff.SigilofFlame, timeShift);
 	local _SigilofSilence, _SigilofSilence_RDY = ConRO:AbilityReady(Ability.SigilofSilence, timeShift);
@@ -487,14 +476,7 @@ function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, p
 	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
 	local _target_in_10yrds = CheckInteractDistance("target", 3);
 
-	if tChosen[Passive.ConcentratedSigils.talentID] then
-		_SigilofFlame_RDY = _SigilofFlameCS_RDY;
-		_SigilofFlame = _SigilofFlameCS;
-		_ElysianDecree_RDY = _ElysianDecreeCS_RDY;
-		_ElysianDecree = _ElysianDecreeCS;
-	end
-
-	if tChosen[Passive.PreciseSigils.talentID] then
+	if tChosen[Ability.PreciseSigils.talentID] then
 		_SigilofFlame_RDY = _SigilofFlamePS_RDY;
 		_SigilofFlame = _SigilofFlamePS;
 		_ElysianDecree_RDY = _ElysianDecreePS_RDY;
@@ -588,7 +570,7 @@ end
 
 function ConRO.DemonHunter.VengeanceDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedDefSpells)
-	local Racial, Ability, Passive, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Ven_Ability, ids.Ven_Passive, ids.Ven_Form, ids.Ven_Buff, ids.Ven_Debuff, ids.Ven_PetAbility, ids.Ven_PvPTalent, ids.Glyph;
+	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Ven_Ability, ids.Ven_Form, ids.Ven_Buff, ids.Ven_Debuff, ids.Ven_PetAbility, ids.Ven_PvPTalent, ids.Glyph;
 --Info
 	local _Player_Level = UnitLevel("player");
 	local _Player_Percent_Health = ConRO:PercentHealth('player');

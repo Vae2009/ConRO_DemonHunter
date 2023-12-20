@@ -101,7 +101,7 @@ function ConRO.DemonHunter.Under10(_, timeShift, currentSpell, gcd, tChosen, pvp
 --Conditions
 	local _is_moving = ConRO:PlayerSpeed();
 	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _target_in_10yrds = CheckInteractDistance("target", 3);
+	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 --Warnings
 
@@ -134,7 +134,7 @@ function ConRO.DemonHunter.Under10Def(_, timeShift, currentSpell, gcd, tChosen, 
 --Conditions
 	local _is_moving = ConRO:PlayerSpeed();
 	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _target_in_10yrds = CheckInteractDistance("target", 3);
+	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 --Warnings
 
@@ -205,7 +205,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 --Conditions
 	local _is_moving = ConRO:PlayerSpeed();
 	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _target_in_10yrds = CheckInteractDistance("target", 3);
+	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 		if _Metamorphosis_BUFF then
 			_ChaosStrike_RDY = _ChaosStrike_RDY and _Annihilation_CD <= 0;
@@ -405,7 +405,7 @@ function ConRO.DemonHunter.HavocDef(_, timeShift, currentSpell, gcd, tChosen, pv
 --Conditions
 	local _is_moving = ConRO:PlayerSpeed();
 	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _target_in_10yrds = CheckInteractDistance("target", 3);
+	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 --Rotations
 		if _Netherwalk_RDY and _Player_Percent_Health <= 25 then
@@ -474,7 +474,7 @@ function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, p
 --Conditions
 	local _is_moving = ConRO:PlayerSpeed();
 	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _target_in_10yrds = CheckInteractDistance("target", 3);
+	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 	if tChosen[Ability.PreciseSigils.talentID] then
 		_SigilofFlame_RDY = _SigilofFlamePS_RDY;
@@ -602,7 +602,7 @@ function ConRO.DemonHunter.VengeanceDef(_, timeShift, currentSpell, gcd, tChosen
 --Conditions
 	local _is_moving = ConRO:PlayerSpeed();
 	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _target_in_10yrds = CheckInteractDistance("target", 3);
+	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 --Rotations
 		if _DemonSpikes_RDY and _DemonSpikes_CHARGES == _DemonSpikes_MAX_CHARGES then

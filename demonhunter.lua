@@ -78,30 +78,59 @@ function ConRO.DemonHunter.Disabled(_, timeShift, currentSpell, gcd, tChosen, pv
 	return nil;
 end
 
-function ConRO.DemonHunter.Under10(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 --Info
-	local _Player_Level = UnitLevel("player");
-	local _Player_Percent_Health = ConRO:PercentHealth('player');
-	local _is_PvP = ConRO:IsPvP();
-	local _in_combat = UnitAffectingCombat('player');
-	local _party_size = GetNumGroupMembers();
-
-	local _is_PC = UnitPlayerControlled("target");
-	local _is_Enemy = ConRO:TarHostile();
-	local _Target_Health = UnitHealth('target');
-	local _Target_Percent_Health = ConRO:PercentHealth('target');
+local _Player_Level = UnitLevel("player");
+local _Player_Percent_Health = ConRO:PercentHealth('player');
+local _is_PvP = ConRO:IsPvP();
+local _in_combat = UnitAffectingCombat('player');
+local _party_size = GetNumGroupMembers();
+local _is_PC = UnitPlayerControlled("target");
+local _is_Enemy = ConRO:TarHostile();
+local _Target_Health = UnitHealth('target');
+local _Target_Percent_Health = ConRO:PercentHealth('target');
 
 --Resources
-
---Racials
-	local _ArcaneTorrent, _ArcaneTorrent_RDY = ConRO:AbilityReady(ids.Racial.ArcaneTorrent, timeShift);
-
---Abilities
+local _Fury, _Fury_Max, _Fury_Percent = ConRO:PlayerPower('Fury');
 
 --Conditions
-	local _is_moving = ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
+local _is_moving = ConRO:PlayerSpeed();
+local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
+local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
+local _enemies_in_25yrds, _target_in_25yrds = ConRO:Targets("25");
+local _enemies_in_40yrds, _target_in_40yrds = ConRO:Targets("40");
+local _can_Execute = _Target_Percent_Health < 20;
+
+--Racials
+local _ArcaneTorrent, _ArcaneTorrent_RDY = _, _;
+
+function ConRO:Stats()
+	_Player_Level = UnitLevel("player");
+	_Player_Percent_Health = ConRO:PercentHealth('player');
+	_is_PvP = ConRO:IsPvP();
+	_in_combat = UnitAffectingCombat('player');
+	_party_size = GetNumGroupMembers();
+	_is_PC = UnitPlayerControlled("target");
+	_is_Enemy = ConRO:TarHostile();
+	_Target_Health = UnitHealth('target');
+	_Target_Percent_Health = ConRO:PercentHealth('target');
+
+	_Fury, _Fury_Max, _Fury_Percent = ConRO:PlayerPower('Fury');
+
+	_is_moving = ConRO:PlayerSpeed();
+	_enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
+	_enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
+	_enemies_in_25yrds, _target_in_25yrds = ConRO:Targets("25");
+	_enemies_in_40yrds, _target_in_40yrds = ConRO:Targets("40");
+	_can_Execute = _Target_Percent_Health < 20;
+
+	_ArcaneTorrent, _ArcaneTorrent_RDY = ConRO:AbilityReady(ids.Racial.ArcaneTorrent, timeShift);
+end
+
+function ConRO.DemonHunter.Under10(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
+	wipe(ConRO.SuggestedSpells);
+	ConRO:Stats();
+
+--Abilities
 
 --Warnings
 
@@ -112,29 +141,10 @@ function ConRO.DemonHunter.Under10(_, timeShift, currentSpell, gcd, tChosen, pvp
 end
 
 function ConRO.DemonHunter.Under10Def(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
---Info
-	local _Player_Level = UnitLevel("player");
-	local _Player_Percent_Health = ConRO:PercentHealth('player');
-	local _is_PvP = ConRO:IsPvP();
-	local _in_combat = UnitAffectingCombat('player');
-	local _party_size = GetNumGroupMembers();
-
-	local _is_PC = UnitPlayerControlled("target");
-	local _is_Enemy = ConRO:TarHostile();
-	local _Target_Health = UnitHealth('target');
-	local _Target_Percent_Health = ConRO:PercentHealth('target');
-
---Resources
-
---Racials
-	local _ArcaneTorrent, _ArcaneTorrent_RDY = ConRO:AbilityReady(ids.Racial.ArcaneTorrent, timeShift);
+	wipe(ConRO.SuggestedDefSpells);
+	ConRO:Stats();
 
 --Abilities
-
---Conditions
-	local _is_moving = ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 --Warnings
 
@@ -144,25 +154,9 @@ function ConRO.DemonHunter.Under10Def(_, timeShift, currentSpell, gcd, tChosen, 
 end
 
 function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedSpells)
-	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Havoc_Ability, ids.Havoc_Form, ids.Havoc_Buff, ids.Havoc_Debuff, ids.Havoc_PetAbility, ids.Havoc_PvPTalent, ids.Glyph;
---Info
-	local _Player_Level = UnitLevel("player");
-	local _Player_Percent_Health = ConRO:PercentHealth('player');
-	local _is_PvP	= ConRO:IsPvP();
-	local _in_combat = UnitAffectingCombat('player');
-	local _party_size	= GetNumGroupMembers();
-
-	local _is_PC = UnitPlayerControlled("target");
-	local _is_Enemy = ConRO:TarHostile();
-	local _Target_Health = UnitHealth('target');
-	local _Target_Percent_Health = ConRO:PercentHealth('target');
-
---Resources
-	local _Fury, _Fury_Max, _Fury_Percent = ConRO:PlayerPower('Fury');
-
---Racials
-	local _ArcaneTorrent, _ArcaneTorrent_RDY = ConRO:AbilityReady(Racial.ArcaneTorrent, timeShift);
+	wipe(ConRO.SuggestedSpells);
+	ConRO:Stats();
+	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Havoc_Ability, ids.Havoc_Form, ids.Havoc_Buff, ids.Havoc_Debuff, ids.Havoc_PetAbility, ids.Havoc_PvPTalent;
 
 --Abilities
 	local _BladeDance, _BladeDance_RDY, _BladeDance_CD = ConRO:AbilityReady(Ability.BladeDance, timeShift);
@@ -192,34 +186,28 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 		local _Metamorphosis_BUFF, _, _Metamorphosis_DUR = ConRO:Aura(Buff.Metamorphosis, timeShift);
 	local _SigilofFlame, _SigilofFlame_RDY = ConRO:AbilityReady(Ability.SigilofFlame, timeShift);
 	local _SigilofFlamePS, _SigilofFlamePS_RDY = ConRO:AbilityReady(Ability.SigilofFlamePS, timeShift);
+	local _TheHunt, _TheHunt_RDY = ConRO:AbilityReady(Ability.TheHunt, timeShift);
 	local _ThrowGlaive, _ThrowGlaive_RDY = ConRO:AbilityReady(Ability.ThrowGlaive, timeShift);
 		local _ThrowGlaive_CHARGES = ConRO:SpellCharges(_ThrowGlaive);
 		local _, _ThrowGlaive_RANGE = ConRO:Targets(Ability.ThrowGlaive);
 	local _VengefulRetreat, _VengefulRetreat_RDY = ConRO:AbilityReady(Ability.VengefulRetreat, timeShift);
 		local _Initiative_BUFF = ConRO:Aura(Buff.Initiative, timeShift);
 
-
-
-	local _TheHunt, _TheHunt_RDY = ConRO:AbilityReady(Ability.TheHunt, timeShift);
-
 --Conditions
-	local _is_moving = ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
-		if _Metamorphosis_BUFF then
-			_ChaosStrike_RDY = _ChaosStrike_RDY and _Annihilation_CD <= 0;
-			_ChaosStrike = _Annihilation;
-			_BladeDance_RDY = _BladeDance_RDY and _DeathSweep_CD <= 0;
-			_BladeDance = _DeathSweep;
-		end
+	if _Metamorphosis_BUFF then
+		_ChaosStrike_RDY = _ChaosStrike_RDY and _Annihilation_CD <= 0;
+		_ChaosStrike = _Annihilation;
+		_BladeDance_RDY = _BladeDance_RDY and _DeathSweep_CD <= 0;
+		_BladeDance = _DeathSweep;
+	end
 
-		if tChosen[Ability.PreciseSigils.talentID] then
-			_SigilofFlame_RDY = _SigilofFlamePS_RDY;
-			_SigilofFlame = _SigilofFlamePS;
-			_ElysianDecree_RDY = _ElysianDecreePS_RDY;
-			_ElysianDecree = _ElysianDecreePS;
-		end
+	if tChosen[Ability.PreciseSigils.talentID] then
+		_SigilofFlame_RDY = _SigilofFlamePS_RDY;
+		_SigilofFlame = _SigilofFlamePS;
+		_ElysianDecree_RDY = _ElysianDecreePS_RDY;
+		_ElysianDecree = _ElysianDecreePS;
+	end
 
 --Indicators
 	ConRO:AbilityInterrupt(_Disrupt, _Disrupt_RDY and ConRO:Interrupt());
@@ -245,7 +233,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 		end
 
 		if not _in_combat then
-			if _SigilofFlame_RDY and currentSpell == _TheHunt then
+			if _SigilofFlame_RDY and currentSpell == _TheHunt and not ConRO_PvPButton:IsVisible() then
 				tinsert(ConRO.SuggestedSpells, _SigilofFlame);
 				_SigilofFlame_RDY = false;
 			end
@@ -260,7 +248,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 				_Felblade_RDY = false;
 			end
 
-			if _FelRush_RDY and _FelRush_CHARGES >= 1 and not _target_in_melee then
+			if _FelRush_RDY and _FelRush_CHARGES >= 1 and not _target_in_melee and not ConRO_PvPButton:IsVisible() then
 				tinsert(ConRO.SuggestedSpells, _FelRush);
 				_FelRush_RDY = false;
 			end
@@ -291,7 +279,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 			_EyeBeam_RDY = false;
 		end
 
-		if _VengefulRetreat_RDY and tChosen[Ability.Initiative.talentID] and not _Initiative_BUFF and (not tChosen[Ability.EssenceBreak.talentID] or (tChosen[Ability.EssenceBreak.talentID] and (_EssenceBreak_RDY or _EssenceBreak_CD > 10))) and ConRO:FullMode(_VengefulRetreat, 120) then
+		if _VengefulRetreat_RDY and tChosen[Ability.Initiative.talentID] and not _Initiative_BUFF and (not tChosen[Ability.EssenceBreak.talentID] or (tChosen[Ability.EssenceBreak.talentID] and (_EssenceBreak_RDY or _EssenceBreak_CD > 10))) and ConRO:FullMode(_VengefulRetreat, 120) and not ConRO_PvPButton:IsVisible() then
 			tinsert(ConRO.SuggestedSpells, _VengefulRetreat);
 			_VengefulRetreat_RDY = false;
 		end
@@ -309,6 +297,11 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 		if _Metamorphosis_RDY and not _Metamorphosis_BUFF and not _EyeBeam_RDY and not _BladeDance_RDY and ConRO:FullMode(_Metamorphosis) then
 			tinsert(ConRO.SuggestedSpells, _Metamorphosis);
 			_Metamorphosis_RDY = false;
+		end
+
+		if _ImmolationAura_RDY and ConRO_PvPButton:IsVisible() then
+			tinsert(ConRO.SuggestedSpells, _ImmolationAura);
+			_ImmolationAura_RDY = false;
 		end
 
 		if _BladeDance_RDY and _Disrupt_RANGE and _EyeBeam_CD > 3 and (not tChosen[Ability.EssenceBreak.talentID] or (tChosen[Ability.EssenceBreak.talentID] and _EssenceBreak_CD > 3)) then
@@ -331,7 +324,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 			_Fury = _Fury - 40;
 		end
 
-		if _FelRush_RDY and _FelRush_CHARGES >= 1 and _UnboundChaos_BUFF then
+		if _FelRush_RDY and _FelRush_CHARGES >= 1 and _UnboundChaos_BUFF and not ConRO_PvPButton:IsVisible() then
 			tinsert(ConRO.SuggestedSpells, _FelRush);
 			_UnboundChaos_BUFF = false;
 		end
@@ -350,12 +343,12 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 			_Fury = _Fury - 40;
 		end
 
-		if _FelRush_RDY and tChosen[Ability.Momentum.talentID] and not _Momentum_BUFF then
+		if _FelRush_RDY and tChosen[Ability.Momentum.talentID] and not _Momentum_BUFF and not ConRO_PvPButton:IsVisible() then
 			tinsert(ConRO.SuggestedSpells, _FelRush);
 			_FelRush_RDY = false;
 		end
 
-		if _SigilofFlame_RDY then
+		if _SigilofFlame_RDY and not ConRO_PvPButton:IsVisible() then
 			tinsert(ConRO.SuggestedSpells, _SigilofFlame);
 			_SigilofFlame_RDY = false;
 		end
@@ -364,11 +357,11 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 			tinsert(ConRO.SuggestedSpells, _DemonsBite);
 		end
 
-		if _ArcaneTorrent_RDY then
+		if _ArcaneTorrent_RDY and not ConRO_PvPButton:IsVisible() then
 			tinsert(ConRO.SuggestedSpells, _ArcaneTorrent);
 		end
 
-		if _FelRush_RDY and _FelRush_CHARGES >= 1 then
+		if _FelRush_RDY and _FelRush_CHARGES >= 1 and not ConRO_PvPButton:IsVisible() then
 			tinsert(ConRO.SuggestedSpells, _FelRush);
 			_FelRush_CHARGES = _FelRush_CHARGES - 1;
 		end
@@ -381,31 +374,13 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 end
 
 function ConRO.DemonHunter.HavocDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedDefSpells)
-	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Havoc_Ability, ids.Havoc_Form, ids.Havoc_Buff, ids.Havoc_Debuff, ids.Havoc_PetAbility, ids.Havoc_PvPTalent, ids.Glyph;
---Info
-	local _Player_Level	= UnitLevel("player");
-	local _Player_Percent_Health = ConRO:PercentHealth('player');
-	local _is_PvP = ConRO:IsPvP();
-	local _in_combat = UnitAffectingCombat('player');
-	local _party_size = GetNumGroupMembers();
-
-	local _is_PC	= UnitPlayerControlled("target");
-	local _is_Enemy = ConRO:TarHostile();
-	local _Target_Health = UnitHealth('target');
-	local _Target_Percent_Health = ConRO:PercentHealth('target');
-
---Resources
-	local _Fury, _Fury_Max, _Fury_Percent	= ConRO:PlayerPower('Fury');
+	wipe(ConRO.SuggestedDefSpells);
+	ConRO:Stats();
+	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Havoc_Ability, ids.Havoc_Form, ids.Havoc_Buff, ids.Havoc_Debuff, ids.Havoc_PetAbility, ids.Havoc_PvPTalent;
 
 --Abilities
 	local _Blur, _Blur_RDY	= ConRO:AbilityReady(Ability.Blur, timeShift);
 	local _Netherwalk, _Netherwalk_RDY	= ConRO:AbilityReady(Ability.Netherwalk, timeShift);
-
---Conditions
-	local _is_moving = ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 --Rotations
 		if _Netherwalk_RDY and _Player_Percent_Health <= 25 then
@@ -419,26 +394,12 @@ function ConRO.DemonHunter.HavocDef(_, timeShift, currentSpell, gcd, tChosen, pv
 end
 
 function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedSpells)
-	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Ven_Ability, ids.Ven_Form, ids.Ven_Buff, ids.Ven_Debuff, ids.Ven_PetAbility, ids.Ven_PvPTalent, ids.Glyph;
---Info
-	local _Player_Level	= UnitLevel("player");
-	local _Player_Percent_Health = ConRO:PercentHealth('player');
-	local _is_PvP = ConRO:IsPvP();
-	local _in_combat = UnitAffectingCombat('player');
-	local _party_size = GetNumGroupMembers();
-
-	local _is_PC = UnitPlayerControlled("target");
-	local _is_Enemy = ConRO:TarHostile();
-	local _Target_Health = UnitHealth('target');
-	local _Target_Percent_Health = ConRO:PercentHealth('target');
+	wipe(ConRO.SuggestedSpells);
+	ConRO:Stats();
+	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Ven_Ability, ids.Ven_Form, ids.Ven_Buff, ids.Ven_Debuff, ids.Ven_PetAbility, ids.Ven_PvPTalent;
 
 --Resources
-	local _Fury, _Fury_Max, _Fury_Percent = ConRO:PlayerPower('Fury');
 	local _, _SoulFragments = ConRO:Form(ids.Ven_Form.SoulFragments);
-
---Racials
-	local _ArcaneTorrent, _ArcaneTorrent_RDY = ConRO:AbilityReady(Racial.ArcaneTorrent, timeShift);
 
 --Abilities
 	local _ConsumeMagic, _ConsumeMagic_RDY = ConRO:AbilityReady(Ability.ConsumeMagic, timeShift);
@@ -472,9 +433,6 @@ function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, p
 	local _Torment, _Torment_RDY = ConRO:AbilityReady(Ability.Torment, timeShift);
 
 --Conditions
-	local _is_moving = ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 	if tChosen[Ability.PreciseSigils.talentID] then
 		_SigilofFlame_RDY = _SigilofFlamePS_RDY;
@@ -569,22 +527,11 @@ function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, p
 end
 
 function ConRO.DemonHunter.VengeanceDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedDefSpells)
-	local Racial, Ability, Form, Buff, Debuff, PetAbility, PvPTalent, Glyph = ids.Racial, ids.Ven_Ability, ids.Ven_Form, ids.Ven_Buff, ids.Ven_Debuff, ids.Ven_PetAbility, ids.Ven_PvPTalent, ids.Glyph;
---Info
-	local _Player_Level = UnitLevel("player");
-	local _Player_Percent_Health = ConRO:PercentHealth('player');
-	local _is_PvP = ConRO:IsPvP();
-	local _in_combat = UnitAffectingCombat('player');
-	local _party_size = GetNumGroupMembers();
-
-	local _is_PC = UnitPlayerControlled("target");
-	local _is_Enemy = ConRO:TarHostile();
-	local _Target_Health = UnitHealth('target');
-	local _Target_Percent_Health = ConRO:PercentHealth('target');
+	wipe(ConRO.SuggestedDefSpells);
+	ConRO:Stats();
+	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Ven_Ability, ids.Ven_Form, ids.Ven_Buff, ids.Ven_Debuff, ids.Ven_PetAbility, ids.Ven_PvPTalent;
 
 --Resources
-	local _Fury, _Fury_Max, _Fury_Percent = ConRO:PlayerPower('Fury');
 	local _, _SoulFragments = ConRO:Form(Form.SoulFragments);
 
 --Abilities
@@ -598,11 +545,6 @@ function ConRO.DemonHunter.VengeanceDef(_, timeShift, currentSpell, gcd, tChosen
 
 	local _SoulBarrier, _SoulBarrier_RDY = ConRO:AbilityReady(Ability.SoulBarrier, timeShift);
 		local _SoulBarrier_BUFF = ConRO:Aura(Buff.SoulBarrier, timeShift);
-
---Conditions
-	local _is_moving = ConRO:PlayerSpeed();
-	local _enemies_in_melee, _target_in_melee = ConRO:Targets("Melee");
-	local _enemies_in_10yrds, _target_in_10yrds = ConRO:Targets("10");
 
 --Rotations
 		if _DemonSpikes_RDY and _DemonSpikes_CHARGES == _DemonSpikes_MAX_CHARGES then

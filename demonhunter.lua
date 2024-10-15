@@ -167,8 +167,8 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 	local _DemonsBite, _DemonsBite_RDY = ConRO:AbilityReady(Ability.DemonsBite, timeShift);
 	local _Disrupt, _Disrupt_RDY = ConRO:AbilityReady(Ability.Disrupt, timeShift);
 		local _, _Disrupt_RANGE = ConRO:Targets(Ability.Disrupt);
-	local _ElysianDecree, _ElysianDecree_RDY = ConRO:AbilityReady(Ability.ElysianDecree, timeShift);
-	local _ElysianDecreePS, _ElysianDecreePS_RDY = ConRO:AbilityReady(Ability.ElysianDecreePS, timeShift);
+	local _SigilofSpite, _SigilofSpite_RDY = ConRO:AbilityReady(Ability.SigilofSpite, timeShift);
+	local _SigilofSpitePS, _SigilofSpitePS_RDY = ConRO:AbilityReady(Ability.SigilofSpitePS, timeShift);
 	local _EssenceBreak, _EssenceBreak_RDY, _EssenceBreak_CD = ConRO:AbilityReady(Ability.EssenceBreak, timeShift);
 		local _EssenceBreak_DEBUFF = ConRO:TargetAura(Debuff.EssenceBreak, timeShift);
 	local _EyeBeam, _EyeBeam_RDY, _EyeBeam_CD = ConRO:AbilityReady(Ability.EyeBeam, timeShift);
@@ -205,8 +205,8 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 	if tChosen[Ability.PreciseSigils.talentID] then
 		_SigilofFlame_RDY = _SigilofFlamePS_RDY;
 		_SigilofFlame = _SigilofFlamePS;
-		_ElysianDecree_RDY = _ElysianDecreePS_RDY;
-		_ElysianDecree = _ElysianDecreePS;
+		_SigilofSpite_RDY = _SigilofSpitePS_RDY;
+		_SigilofSpite = _SigilofSpitePS;
 	end
 
 --Indicators
@@ -221,7 +221,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 	ConRO:AbilityBurst(_FelBarrage, _FelBarrage_RDY and _Disrupt_RANGE and ConRO:BurstMode(_FelBarrage));
 
 	ConRO:AbilityBurst(_TheHunt, _TheHunt_RDY and ConRO:BurstMode(_TheHunt));
-	ConRO:AbilityBurst(_ElysianDecree, _ElysianDecree_RDY and ConRO:BurstMode(_ElysianDecree));
+	ConRO:AbilityBurst(_SigilofSpite, _SigilofSpite_RDY and ConRO:BurstMode(_SigilofSpite));
 
 --Rotations
 		if select(8, UnitChannelInfo("player")) == _FelBarrage then --Do not break cast
@@ -259,9 +259,9 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 			end
 		end
 
-		if _ElysianDecree_RDY and ConRO:FullMode(_ElysianDecree) then
-			tinsert(ConRO.SuggestedSpells, _ElysianDecree);
-			_ElysianDecree_RDY = false;
+		if _SigilofSpite_RDY and ConRO:FullMode(_SigilofSpite) then
+			tinsert(ConRO.SuggestedSpells, _SigilofSpite);
+			_SigilofSpite_RDY = false;
 		end
 
 		if _TheHunt_RDY and ConRO:FullMode(_TheHunt) then
@@ -404,8 +404,8 @@ function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, p
 --Abilities
 	local _ConsumeMagic, _ConsumeMagic_RDY = ConRO:AbilityReady(Ability.ConsumeMagic, timeShift);
 	local _Disrupt, _Disrupt_RDY = ConRO:AbilityReady(Ability.Disrupt, timeShift);
-	local _ElysianDecree, _ElysianDecree_RDY = ConRO:AbilityReady(Ability.ElysianDecree, timeShift);
-	local _ElysianDecreePS, _ElysianDecreePS_RDY = ConRO:AbilityReady(Ability.ElysianDecreePS, timeShift);
+	local _SigilofSpite, _SigilofSpite_RDY = ConRO:AbilityReady(Ability.SigilofSpite, timeShift);
+	local _SigilofSpitePS, _SigilofSpitePS_RDY = ConRO:AbilityReady(Ability.SigilofSpitePS, timeShift);
 	local _FelDevastation, _FelDevastation_RDY = ConRO:AbilityReady(Ability.FelDevastation, timeShift);
 	local _Felblade, _Felblade_RDY = ConRO:AbilityReady(Ability.Felblade, timeShift);
 		local _, _Felblade_RANGE = ConRO:Targets(Ability.Felblade);
@@ -437,8 +437,8 @@ function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, p
 	if tChosen[Ability.PreciseSigils.talentID] then
 		_SigilofFlame_RDY = _SigilofFlamePS_RDY;
 		_SigilofFlame = _SigilofFlamePS;
-		_ElysianDecree_RDY = _ElysianDecreePS_RDY;
-		_ElysianDecree = _ElysianDecreePS;
+		_SigilofSpite_RDY = _SigilofSpitePS_RDY;
+		_SigilofSpite = _SigilofSpitePS;
 	end
 
 --Indicators
@@ -451,7 +451,7 @@ function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, p
 	ConRO:AbilityTaunt(_Torment, _Torment_RDY);
 
 	ConRO:AbilityBurst(_FelDevastation, _FelDevastation_RDY and _Fury >= 50 and ConRO:BurstMode(_FelDevastation));
-	ConRO:AbilityBurst(_ElysianDecree, _ElysianDecree_RDY and _Frailty_COUNT >= 3 and ConRO:BurstMode(_ElysianDecree));
+	ConRO:AbilityBurst(_SigilofSpite, _SigilofSpite_RDY and _Frailty_COUNT >= 3 and ConRO:BurstMode(_SigilofSpite));
 	ConRO:AbilityBurst(_SoulCarver, _SoulCarver_RDY and ConRO:BurstMode(_SoulCarver));
 	ConRO:AbilityBurst(_TheHunt, _TheHunt_RDY and _Frailty_COUNT >= 3 and ConRO:BurstMode(_TheHunt));
 
@@ -481,9 +481,9 @@ function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, p
 			_ImmolationAura_RDY = false;
 		end
 
-		if _ElysianDecree_RDY and _Frailty_COUNT >= 3 and ConRO:FullMode(_ElysianDecree) then
-			tinsert(ConRO.SuggestedSpells, _ElysianDecree);
-			_ElysianDecree_RDY = false;
+		if _SigilofSpite_RDY and _Frailty_COUNT >= 3 and ConRO:FullMode(_SigilofSpite) then
+			tinsert(ConRO.SuggestedSpells, _SigilofSpite);
+			_SigilofSpite_RDY = false;
 		end
 
 		if _TheHunt_RDY and _Frailty_COUNT >= 3 and ConRO:FullMode(_TheHunt) then

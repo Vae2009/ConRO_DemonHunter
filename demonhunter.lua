@@ -106,7 +106,6 @@ local _ArcaneTorrent, _ArcaneTorrent_RDY = _, _;
 
 local HeroSpec, Racial = ids.HeroSpec, ids.Racial;
 
-
 function ConRO:Stats()
 	_Player_Level = UnitLevel("player");
 	_Player_Percent_Health = ConRO:PercentHealth('player');
@@ -234,12 +233,14 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 	ConRO:AbilityBurst(_TheHunt, _TheHunt_RDY and ConRO:BurstMode(_TheHunt));
 
 --Rotations
-	if select(8, UnitChannelInfo("player")) == _EyeBeam then -- Do not break cast
-		tinsert(ConRO.SuggestedSpells, _EyeBeam);
-	end
-
 	repeat
 		while(true) do
+			if select(8, UnitChannelInfo("player")) == _EyeBeam then -- Do not break cast
+				tinsert(ConRO.SuggestedSpells, _EyeBeam);
+				_Queue = _Queue + 1;
+				break;
+			end
+
 			if not _in_combat then
 				if _ImmolationAura_RDY and not _ImmolationAura_BUFF then
 					tinsert(ConRO.SuggestedSpells, _ImmolationAura);
@@ -347,7 +348,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 				break;
 			end
 
-			if _SigilofDoom_RDY and ConRO:IsOverride(_SigilofFire) == _SigilofDoom then
+			if _SigilofDoom_RDY and ConRO:IsOverride(_SigilofFlame) == _SigilofDoom then
 				tinsert(ConRO.SuggestedSpells, _SigilofDoom);
 				_SigilofDoom_RDY = false;
 				_Queue = _Queue + 1;

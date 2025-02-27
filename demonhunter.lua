@@ -4,6 +4,7 @@ end
 ConRO.DemonHunter.CheckPvPTalents = function()
 end
 local ConRO_DemonHunter, ids = ...;
+local Ability, Buff, Debuff, PvP_Talent = _, _, _, _;
 
 function ConRO:EnableRotationModule(mode)
 	mode = mode or 0;
@@ -11,18 +12,24 @@ function ConRO:EnableRotationModule(mode)
 	self.ModuleOnEnable = ConRO.DemonHunter.CheckPvPTalents;
 	if mode == 0 then
 		self.Description = "Demon Hunter [No Specialization Under 10]";
-		self.NextSpell = ConRO.DemonHunter.Under10;
+		self.NextSpell = ConRO.DemonHunter.Disabled;
+		self.NextDef = ConRO.DemonHunter.Disabled;
 		self.ToggleHealer();
+		ConROWindow:SetAlpha(0);
+		ConRODefenseWindow:SetAlpha(0);
 	end;
 	if mode == 1 then
 		self.Description = "Demon Hunter [Havoc - Melee]";
 		if ConRO.db.profile._Spec_1_Enabled then
+			Ability, Buff, Debuff, PvPTalent = ids.havoc.ability, ids.havoc.buff, ids.havoc.debuff, ids.havoc.pvp_talent;
 			self.NextSpell = ConRO.DemonHunter.Havoc;
+			self.NextDef = ConRO.DemonHunter.HavocDef;
 			self.ToggleDamage();
 			ConROWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 			ConRODefenseWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 		else
 			self.NextSpell = ConRO.DemonHunter.Disabled;
+			self.NextDef = ConRO.DemonHunter.Disabled;
 			self.ToggleHealer();
 			ConROWindow:SetAlpha(0);
 			ConRODefenseWindow:SetAlpha(0);
@@ -31,13 +38,16 @@ function ConRO:EnableRotationModule(mode)
 	if mode == 2 then
 		self.Description = "Demon Hunter [Vengeance - Tank]";
 		if ConRO.db.profile._Spec_2_Enabled then
+			Ability, Buff, Debuff, PvPTalent = ids.vengeance.ability, ids.vengeance.buff, ids.vengeance.debuff, ids.vengeance.pvp_talent;
 			self.NextSpell = ConRO.DemonHunter.Vengeance;
+			self.NextDef = ConRO.DemonHunter.VengeanceDef;
 			self.ToggleDamage();
 			self.BlockAoE();
 			ConROWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 			ConRODefenseWindow:SetAlpha(ConRO.db.profile.transparencyWindow);
 		else
 			self.NextSpell = ConRO.DemonHunter.Disabled;
+			self.NextDef = ConRO.DemonHunter.Disabled;
 			self.ToggleHealer();
 			ConROWindow:SetAlpha(0);
 			ConRODefenseWindow:SetAlpha(0);
@@ -48,24 +58,7 @@ function ConRO:EnableRotationModule(mode)
 end
 
 function ConRO:EnableDefenseModule(mode)
-	mode = mode or 0;
-	if mode == 0 then
-		self.NextDef = ConRO.DemonHunter.Under10Def;
-	end;
-	if mode == 1 then
-		if ConRO.db.profile._Spec_1_Enabled then
-			self.NextDef = ConRO.DemonHunter.HavocDef;
-		else
-			self.NextDef = ConRO.DemonHunter.Disabled;
-		end
-	end;
-	if mode == 2 then
-		if ConRO.db.profile._Spec_2_Enabled then
-			self.NextDef = ConRO.DemonHunter.VengeanceDef;
-		else
-			self.NextDef = ConRO.DemonHunter.Disabled;
-		end
-	end;
+
 end
 
 function ConRO:UNIT_SPELLCAST_SUCCEEDED(event, unitID, lineID, spellID)
@@ -104,7 +97,7 @@ local _can_Execute = _Target_Percent_Health < 20;
 --Racials
 local _ArcaneTorrent, _ArcaneTorrent_RDY = _, _;
 
-local HeroSpec, Racial = ids.HeroSpec, ids.Racial;
+local HeroSpec, Racial = ids.hero_spec, ids.racial;
 
 function ConRO:Stats()
 	_Player_Level = UnitLevel("player");
@@ -130,37 +123,9 @@ function ConRO:Stats()
 	_ArcaneTorrent, _ArcaneTorrent_RDY = ConRO:AbilityReady(Racial.ArcaneTorrent, timeShift);
 end
 
-function ConRO.DemonHunter.Under10(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedSpells);
-	ConRO:Stats();
-
---Abilities
-
---Warnings
-
---Rotations
-
-
-	return nil;
-end
-
-function ConRO.DemonHunter.Under10Def(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
-	wipe(ConRO.SuggestedDefSpells);
-	ConRO:Stats();
-
---Abilities
-
---Warnings
-
---Rotations
-
-	return nil;
-end
-
 function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedSpells);
 	ConRO:Stats();
-	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Havoc_Ability, ids.Havoc_Form, ids.Havoc_Buff, ids.Havoc_Debuff, ids.Havoc_PetAbility, ids.Havoc_PvPTalent;
 
 --Abilities
 	local _BladeDance, _BladeDance_RDY = ConRO:AbilityReady(Ability.BladeDance, timeShift);
@@ -179,14 +144,14 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 	local _FelEruption, _FelEruption_RDY = ConRO:AbilityReady(Ability.FelEruption, timeShift);
 	local _FelRush, _FelRush_RDY = ConRO:AbilityReady(Ability.FelRush, timeShift);
 		local _FelRush_CHARGES = ConRO:SpellCharges(_FelRush);
-		local _Momentum_BUFF = ConRO:Aura(Buff.Momentum, timeShift);
 		local _InnerDemon_BUFF = ConRO:Form(Buff.InnerDemon);
 	local _Felblade, _Felblade_RDY = ConRO:AbilityReady(Ability.Felblade, timeShift);
 		local _, _Felblade_RANGE = ConRO:Targets(Ability.Felblade);
 	local _GlaiveTempest, _GlaiveTempest_RDY = ConRO:AbilityReady(Ability.GlaiveTempest, timeShift);
 	local _ImmolationAura, _ImmolationAura_RDY = ConRO:AbilityReady(Ability.ImmolationAura, timeShift);
 		local _ImmolationAura_BUFF = ConRO:Aura(Buff.ImmolationAura, timeShift);
-		local _ConsumingFire, _ConsumingFire_RDY = ConRO:AbilityReady(Ability.ConsumingFire, timeShift);
+	local _ConsumingFire, _ConsumingFire_RDY = ConRO:AbilityReady(Ability.ConsumingFire, timeShift);
+		local _ConsumingFire_BUFF = ConRO:Aura(Buff.ConsumingFire, timeShift);
 		local _UnboundChaos_BUFF = ConRO:Aura(Buff.UnboundChaos, timeShift);
 	local _Metamorphosis, _Metamorphosis_RDY = ConRO:AbilityReady(Ability.Metamorphosis, timeShift);
 		local _Metamorphosis_BUFF = ConRO:Aura(Buff.Metamorphosis, timeShift);
@@ -197,6 +162,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 		local _SigilofFlame_BUFF = ConRO:Aura(Buff.SigilofFlame, timeShift);
 	local _SigilofSpite, _SigilofSpite_RDY = ConRO:AbilityReady(Ability.SigilofSpite, timeShift);
 	local _TheHunt, _TheHunt_RDY = ConRO:AbilityReady(Ability.TheHunt, timeShift);
+		local _Inertia_BUFF = ConRO:Aura(Buff.Inertia, timeShift);
 	local _ThrowGlaive, _ThrowGlaive_RDY = ConRO:AbilityReady(Ability.ThrowGlaive, timeShift);
 		local _ThrowGlaive_CHARGES = ConRO:SpellCharges(_ThrowGlaive);
 		local _, _ThrowGlaive_RANGE = ConRO:Targets(Ability.ThrowGlaive);
@@ -250,17 +216,17 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 					break;
 				end
 
-				if _TheHunt_RDY and ConRO:FullMode(_TheHunt) then
-					tinsert(ConRO.SuggestedSpells, _TheHunt);
-					_TheHunt_RDY = false;
-					_target_in_melee = true;
+				if _SigilofFlame_RDY and not _SigilofFlame_BUFF then
+					tinsert(ConRO.SuggestedSpells, _SigilofFlame);
+					_SigilofFlame_RDY = false;
 					_Queue = _Queue + 1;
 					break;
 				end
 
-				if _SigilofFlame_RDY and not _SigilofFlame_BUFF then
-					tinsert(ConRO.SuggestedSpells, _SigilofFlame);
-					_SigilofFlame_RDY = false;
+				if _TheHunt_RDY and ConRO:FullMode(_TheHunt) then
+					tinsert(ConRO.SuggestedSpells, _TheHunt);
+					_TheHunt_RDY = false;
+					_target_in_melee = true;
 					_Queue = _Queue + 1;
 					break;
 				end
@@ -282,100 +248,181 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 				end
 			end
 
-			if _BladeDance_RDY and _Fury >= 35 and _Disrupt_RANGE and _Metamorphosis_BUFF and _EssenceBreak_DEBUFF then
-				tinsert(ConRO.SuggestedSpells, _BladeDance);
-				_BladeDance_RDY = false;
-				_Fury = _Fury - 35;
-				_Queue = _Queue + 1;
-				break;
-			end
+			if ((ConRO_AutoButton:IsVisible() and _enemies_in_melee >= 2) or ConRO_AoEButton:IsVisible()) then
+				if _BladeDance_RDY and _Fury >= 35 and _Disrupt_RANGE and _Metamorphosis_BUFF and _EssenceBreak_DEBUFF then
+					tinsert(ConRO.SuggestedSpells, _BladeDance);
+					_BladeDance_RDY = false;
+					_Fury = _Fury - 35;
+					_Queue = _Queue + 1;
+					break;
+				end
 
-			if _ChaosStrike_RDY and _Fury >= 40 and _Metamorphosis_BUFF and _EssenceBreak_DEBUFF and _target_in_melee then
-				tinsert(ConRO.SuggestedSpells, _ChaosStrike);
-				_Fury = _Fury - 40;
-				_Queue = _Queue + 1;
-				break;
-			end
+				if _ChaosStrike_RDY and _Fury >= 40 and _Metamorphosis_BUFF and _EssenceBreak_DEBUFF and _target_in_melee then
+					tinsert(ConRO.SuggestedSpells, _ChaosStrike);
+					_Fury = _Fury - 40;
+					_Queue = _Queue + 1;
+					break;
+				end
 
-			if _ReaversGlaive_RDY and ConRO:IsOverride(_ThrowGlaive) == _ReaversGlaive and _ThrowGlaive_RANGE then
-				tinsert(ConRO.SuggestedSpells, _ReaversGlaive);
-				_ReaversGlaive_RDY = false;
-				_Queue = _Queue + 1;
-				break;
-			end
+				if _ReaversGlaive_RDY and ConRO:IsOverride(_ThrowGlaive) == _ReaversGlaive and _ThrowGlaive_RANGE then
+					tinsert(ConRO.SuggestedSpells, _ReaversGlaive);
+					_ReaversGlaive_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
 
-			if _FelRush_RDY and _UnboundChaos_BUFF then
-				tinsert(ConRO.SuggestedSpells, _FelRush);
-				_FelRush_RDY = false;
-				_UnboundChaos_BUFF = false;
-				_Queue = _Queue + 1;
-				break;
-			end
+				if _Felblade_RDY and _Fury < _Fury_Max - 40 and _Inertia_BUFF then
+					tinsert(ConRO.SuggestedSpells, _Felblade);
+					_Felblade_RDY = false;
+					_Inertia_BUFF = false;
+					_target_in_melee = true;
+					_Queue = _Queue + 1;
+					break;
+				end
 
-			if _ConsumingFire_RDY and ConRO:IsOverride(_ImmolationAura) == _ConsumingFire and not _ImmolationAura_BUFF and tChosen[Ability.Inertia.talentID] then
-				tinsert(ConRO.SuggestedSpells, _ConsumingFire);
-				_ConsumingFire_RDY = false;
-				_Queue = _Queue + 1;
-				break;
-			end
+				if _FelRush_RDY and _Inertia_BUFF then
+					tinsert(ConRO.SuggestedSpells, _FelRush);
+					_FelRush_RDY = false;
+					_Inertia_BUFF = false;
+					_Queue = _Queue + 1;
+					break;
+				end
 
-			if _ImmolationAura_RDY and not _ImmolationAura_BUFF and tChosen[Ability.Inertia.talentID] then
-				tinsert(ConRO.SuggestedSpells, _ImmolationAura);
-				_ImmolationAura_RDY = false;
-				_ImmolationAura_BUFF = true;
-				_Queue = _Queue + 1;
-				break;
-			end
+				if _ConsumingFire_RDY and ConRO:IsOverride(_ImmolationAura) == _ConsumingFire and not (_ImmolationAura_BUFF or _ConsumingFire_BUFF) then
+					tinsert(ConRO.SuggestedSpells, _ConsumingFire);
+					_ConsumingFire_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
 
-			if _FelBarrage_RDY and _ImmolationAura_BUFF and _Fury > 50 and _Disrupt_RANGE and ConRO:FullMode(_FelBarrage) then
-				tinsert(ConRO.SuggestedSpells, _FelBarrage);
-				_FelBarrage_RDY = false;
-				_Queue = _Queue + 1;
-				break;
-			end
+				if _ImmolationAura_RDY and not (_ImmolationAura_BUFF or _ConsumingFire_BUFF) then
+					tinsert(ConRO.SuggestedSpells, _ImmolationAura);
+					_ImmolationAura_RDY = false;
+					_ImmolationAura_BUFF = true;
+					_Queue = _Queue + 1;
+					break;
+				end
 
-			if _VengefulRetreat_RDY and tChosen[Ability.Initiative.talentID] and not _Initiative_BUFF and not _EssenceBreak_DEBUFF then
-				tinsert(ConRO.SuggestedSpells, _VengefulRetreat);
-				_VengefulRetreat_RDY = false;
-				_Queue = _Queue + 1;
-				break;
-			end
+				if _VengefulRetreat_RDY and tChosen[Ability.Initiative.talentID] and not _Initiative_BUFF and not _EssenceBreak_DEBUFF then
+					tinsert(ConRO.SuggestedSpells, _VengefulRetreat);
+					_VengefulRetreat_RDY = false;
+					_Initiative_BUFF = true;
+					_Queue = _Queue + 1;
+					break;
+				end
 
-			if _TheHunt_RDY and ConRO:FullMode(_TheHunt) then
-				tinsert(ConRO.SuggestedSpells, _TheHunt);
-				_TheHunt_RDY = false;
-				_Queue = _Queue + 1;
-				break;
-			end
+				if _TheHunt_RDY and ((not _ReaversGlaive_RDY) or ConRO:HeroSpec(HeroSpec.FelScarred)) and ConRO:FullMode(_TheHunt) then
+					tinsert(ConRO.SuggestedSpells, _TheHunt);
+					_TheHunt_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
 
-			if _SigilofDoom_RDY and ConRO:IsOverride(_SigilofFlame) == _SigilofDoom then
-				tinsert(ConRO.SuggestedSpells, _SigilofDoom);
-				_SigilofDoom_RDY = false;
-				_Queue = _Queue + 1;
-				break;
-			end
+				if _SigilofDoom_RDY and ConRO:IsOverride(_SigilofFlame) == _SigilofDoom then
+					tinsert(ConRO.SuggestedSpells, _SigilofDoom);
+					_SigilofDoom_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
 
-			if _EssenceBreak_RDY and _Disrupt_RANGE and _Metamorphosis_BUFF then
-				tinsert(ConRO.SuggestedSpells, _EssenceBreak);
-				_EssenceBreak_RDY = false;
-				_EssenceBreak_DEBUFF = true;
-				_Queue = _Queue + 1;
-				break;
-			end
+				if _EssenceBreak_RDY and _Disrupt_RANGE and _Metamorphosis_BUFF then
+					tinsert(ConRO.SuggestedSpells, _EssenceBreak);
+					_EssenceBreak_RDY = false;
+					_EssenceBreak_DEBUFF = true;
+					_Queue = _Queue + 1;
+					break;
+				end
 
-			if _BladeDance_RDY and _Fury >= 35 and _Disrupt_RANGE and _Metamorphosis_BUFF then
-				tinsert(ConRO.SuggestedSpells, _BladeDance);
-				_BladeDance_RDY = false;
-				_Fury = _Fury - 35;
-				_Queue = _Queue + 1;
-				break;
-			end
+				if _BladeDance_RDY and _Fury >= 35 and _Disrupt_RANGE and _Metamorphosis_BUFF then
+					tinsert(ConRO.SuggestedSpells, _BladeDance);
+					_BladeDance_RDY = false;
+					_Fury = _Fury - 35;
+					_Queue = _Queue + 1;
+					break;
+				end
 
-			if _SigilofSpite_RDY and ConRO:FullMode(_SigilofSpite) then
-				tinsert(ConRO.SuggestedSpells, _SigilofSpite);
-				_SigilofSpite_RDY = false;
-				_Queue = _Queue + 1;
-				break;
+				if _SigilofSpite_RDY and ConRO:FullMode(_SigilofSpite) then
+					tinsert(ConRO.SuggestedSpells, _SigilofSpite);
+					_SigilofSpite_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
+			else
+				if _BladeDance_RDY and _Fury >= 35 and _Disrupt_RANGE and _Metamorphosis_BUFF and _EssenceBreak_DEBUFF then
+					tinsert(ConRO.SuggestedSpells, _BladeDance);
+					_BladeDance_RDY = false;
+					_Fury = _Fury - 35;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _ChaosStrike_RDY and _Fury >= 40 and _Metamorphosis_BUFF and _EssenceBreak_DEBUFF and _target_in_melee then
+					tinsert(ConRO.SuggestedSpells, _ChaosStrike);
+					_Fury = _Fury - 40;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _ReaversGlaive_RDY and ConRO:IsOverride(_ThrowGlaive) == _ReaversGlaive and _ThrowGlaive_RANGE then
+					tinsert(ConRO.SuggestedSpells, _ReaversGlaive);
+					_ReaversGlaive_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _SigilofSpite_RDY and ConRO:FullMode(_SigilofSpite) then
+					tinsert(ConRO.SuggestedSpells, _SigilofSpite);
+					_SigilofSpite_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _Felblade_RDY and _Fury < _Fury_Max - 40 and _Inertia_BUFF then
+					tinsert(ConRO.SuggestedSpells, _Felblade);
+					_Felblade_RDY = false;
+					_Inertia_BUFF = false;
+					_target_in_melee = true;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _VengefulRetreat_RDY and tChosen[Ability.Initiative.talentID] and not _Initiative_BUFF and not _EssenceBreak_DEBUFF then
+					tinsert(ConRO.SuggestedSpells, _VengefulRetreat);
+					_VengefulRetreat_RDY = false;
+					_Initiative_BUFF = true;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _TheHunt_RDY and ((not _ReaversGlaive_RDY) or ConRO:HeroSpec(HeroSpec.FelScarred)) and ConRO:FullMode(_TheHunt) then
+					tinsert(ConRO.SuggestedSpells, _TheHunt);
+					_TheHunt_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _SigilofDoom_RDY and ConRO:IsOverride(_SigilofFlame) == _SigilofDoom then
+					tinsert(ConRO.SuggestedSpells, _SigilofDoom);
+					_SigilofDoom_RDY = false;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _EssenceBreak_RDY and _Disrupt_RANGE and _Metamorphosis_BUFF then
+					tinsert(ConRO.SuggestedSpells, _EssenceBreak);
+					_EssenceBreak_RDY = false;
+					_EssenceBreak_DEBUFF = true;
+					_Queue = _Queue + 1;
+					break;
+				end
+
+				if _BladeDance_RDY and _Fury >= 35 and _Disrupt_RANGE and _Metamorphosis_BUFF then
+					tinsert(ConRO.SuggestedSpells, _BladeDance);
+					_BladeDance_RDY = false;
+					_Fury = _Fury - 35;
+					_Queue = _Queue + 1;
+					break;
+				end
 			end
 
 			if _Metamorphosis_RDY and not _Metamorphosis_BUFF and not _EyeBeam_RDY and ConRO:FullMode(_Metamorphosis) then
@@ -386,16 +433,9 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 				break;
 			end
 
-			if _SigilofFlame_RDY and not _SigilofFlame_BUFF and ((ConRO_AutoButton:IsVisible() and _enemies_in_melee >= 2) or ConRO_AoEButton:IsVisible()) then
+			if _SigilofFlame_RDY and not _SigilofFlame_BUFF and ConRO:HeroSpec(HeroSpec.FelScarred) then
 				tinsert(ConRO.SuggestedSpells, _SigilofFlame);
 				_SigilofFlame_RDY = false;
-				_Queue = _Queue + 1;
-				break;
-			end
-
-			if _EyeBeam_RDY and _Felblade_RANGE then
-				tinsert(ConRO.SuggestedSpells, _EyeBeam);
-				_EyeBeam_RDY = false;
 				_Queue = _Queue + 1;
 				break;
 			end
@@ -407,6 +447,13 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 				break;
 			end
 
+			if _EyeBeam_RDY and _Felblade_RANGE then
+				tinsert(ConRO.SuggestedSpells, _EyeBeam);
+				_EyeBeam_RDY = false;
+				_Queue = _Queue + 1;
+				break;
+			end
+
 			if _BladeDance_RDY and _Disrupt_RANGE then
 				tinsert(ConRO.SuggestedSpells, _BladeDance);
 				_BladeDance_RDY = false;
@@ -414,7 +461,7 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 				break;
 			end
 
-			if _GlaiveTempest_RDY and _target_in_melee then
+			if _GlaiveTempest_RDY and _target_in_melee and ((ConRO_AutoButton:IsVisible() and _enemies_in_melee >= 2) or ConRO_AoEButton:IsVisible()) then
 				tinsert(ConRO.SuggestedSpells, _GlaiveTempest);
 				_GlaiveTempest_RDY = false;
 				_Queue = _Queue + 1;
@@ -428,14 +475,28 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 				break;
 			end
 
-			if _Felblade_RDY and _Fury < 80 then
+			if _GlaiveTempest_RDY and _target_in_melee then
+				tinsert(ConRO.SuggestedSpells, _GlaiveTempest);
+				_GlaiveTempest_RDY = false;
+				_Queue = _Queue + 1;
+				break;
+			end
+
+			if _SigilofFlame_RDY and not _SigilofFlame_BUFF and _Fury < 90 and ConRO:HeroSpec(HeroSpec.AldrachiReaver) and ((ConRO_AutoButton:IsVisible() and _enemies_in_melee >= 2) or ConRO_AoEButton:IsVisible()) then
+				tinsert(ConRO.SuggestedSpells, _SigilofFlame);
+				_SigilofFlame_RDY = false;
+				_Queue = _Queue + 1;
+				break;
+			end
+
+			if _Felblade_RDY and ((_Fury < 80 and ConRO:HeroSpec(HeroSpec.AldrachiReaver)) or (_Fury < 130 and ConRO:HeroSpec(HeroSpec.FelScarred))) then
 				tinsert(ConRO.SuggestedSpells, _Felblade);
 				_Felblade_RDY = false;
 				_Queue = _Queue + 1;
 				break;
 			end
 
-			if _SigilofFlame_RDY and not _SigilofFlame_BUFF and _Fury < 90 then
+			if _SigilofFlame_RDY and not _SigilofFlame_BUFF and _Fury < 90 and ConRO:HeroSpec(HeroSpec.AldrachiReaver) then
 				tinsert(ConRO.SuggestedSpells, _SigilofFlame);
 				_SigilofFlame_RDY = false;
 				_Queue = _Queue + 1;
@@ -449,14 +510,14 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 				break;
 			end
 
-			if _ConsumingFire_RDY and ConRO:IsOverride(_ImmolationAura) == _ConsumingFire and not _ImmolationAura_BUFF then
+			if _ConsumingFire_RDY and ConRO:IsOverride(_ImmolationAura) == _ConsumingFire and not (_ImmolationAura_BUFF or _ConsumingFire_BUFF) then
 				tinsert(ConRO.SuggestedSpells, _ConsumingFire);
 				_ConsumingFire_RDY = false;
 				_Queue = _Queue + 1;
 				break;
 			end
 
-			if _ImmolationAura_RDY and not _ImmolationAura_BUFF then
+			if _ImmolationAura_RDY and not (_ImmolationAura_BUFF or _ConsumingFire_BUFF) then
 				tinsert(ConRO.SuggestedSpells, _ImmolationAura);
 				_ImmolationAura_RDY = false;
 				_ImmolationAura_BUFF = true;
@@ -477,40 +538,39 @@ function ConRO.DemonHunter.Havoc(_, timeShift, currentSpell, gcd, tChosen, pvpCh
 				break;
 			end
 
-			_Queue = _Queue + 1;
+			tinsert(ConRO.SuggestedSpells, 6603); --Waiting Spell Icon
+			_Queue = _Queue + 3;
 			break;
 		end
-	until _Queue > 3;
-return nil;
+	until _Queue >= 3;
+	return nil;
 end
 
 function ConRO.DemonHunter.HavocDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedDefSpells);
 	ConRO:Stats();
-	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Havoc_Ability, ids.Havoc_Form, ids.Havoc_Buff, ids.Havoc_Debuff, ids.Havoc_PetAbility, ids.Havoc_PvPTalent;
 
 --Abilities
 	local _Blur, _Blur_RDY	= ConRO:AbilityReady(Ability.Blur, timeShift);
 	local _Netherwalk, _Netherwalk_RDY	= ConRO:AbilityReady(Ability.Netherwalk, timeShift);
 
 --Rotations
-		if _Netherwalk_RDY and _Player_Percent_Health <= 25 then
-			tinsert(ConRO.SuggestedDefSpells, _Netherwalk);
-		end
+	if _Netherwalk_RDY and _Player_Percent_Health <= 25 then
+		tinsert(ConRO.SuggestedDefSpells, _Netherwalk);
+	end
 
-		if _Blur_RDY then
-			tinsert(ConRO.SuggestedDefSpells, _Blur);
-		end
+	if _Blur_RDY then
+		tinsert(ConRO.SuggestedDefSpells, _Blur);
+	end
 	return nil;
 end
 
 function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedSpells);
 	ConRO:Stats();
-	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Ven_Ability, ids.Ven_Form, ids.Ven_Buff, ids.Ven_Debuff, ids.Ven_PetAbility, ids.Ven_PvPTalent;
 
 --Resources
-	local _, _SoulFragments = ConRO:Form(ids.Ven_Form.SoulFragments);
+	local _, _SoulFragments = ConRO:Form(Buff.SoulFragments);
 
 --Abilities
 	local _ConsumeMagic, _ConsumeMagic_RDY = ConRO:AbilityReady(Ability.ConsumeMagic, timeShift);
@@ -529,7 +589,7 @@ function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, p
 		local _InfernalStrike_CHARGES, _, _InfernalStrike_CHARGES_CD = ConRO:SpellCharges(_InfernalStrike);
 	local _Metamorphosis, _Metamorphosis_RDY = ConRO:AbilityReady(Ability.Metamorphosis, timeShift);
 		local _Metamorphosis_BUFF = ConRO:Aura(Buff.Metamorphosis, timeShift);
-	local _ReaversGlaive, _ReaversGlaive_RDY = ConRO:AbilityReady(Ability.ReaversGlaive , timeShift);
+	local _ReaversGlaive, _ReaversGlaive_RDY = ConRO:AbilityReady(Ability.ReaversGlaive, timeShift);
 		local _RendingStrike_BUFF = ConRO:Aura(Buff.RendingStrike, timeShift);
 	local _Shear, _Shear_RDY = ConRO:AbilityReady(Ability.Shear, timeShift);
 	local _SigilofFlame, _SigilofFlame_RDY = ConRO:AbilityReady(Ability.SigilofFlame, timeShift);
@@ -774,20 +834,20 @@ function ConRO.DemonHunter.Vengeance(_, timeShift, currentSpell, gcd, tChosen, p
 				break;
 			end
 
-			_Queue = _Queue + 1;
+			tinsert(ConRO.SuggestedSpells, 6603); --Waiting Spell Icon
+			_Queue = _Queue + 3;
 			break;
 		end
-	until _Queue > 3;
-return nil;
+	until _Queue >= 3;
+	return nil;
 end
 
 function ConRO.DemonHunter.VengeanceDef(_, timeShift, currentSpell, gcd, tChosen, pvpChosen)
 	wipe(ConRO.SuggestedDefSpells);
 	ConRO:Stats();
-	local Ability, Form, Buff, Debuff, PetAbility, PvPTalent = ids.Ven_Ability, ids.Ven_Form, ids.Ven_Buff, ids.Ven_Debuff, ids.Ven_PetAbility, ids.Ven_PvPTalent;
 
 --Resources
-	local _, _SoulFragments = ConRO:Form(Form.SoulFragments);
+	local _, _SoulFragments = ConRO:Form(Buff.SoulFragments);
 
 --Abilities
 	local _DemonSpikes, _DemonSpikes_RDY = ConRO:AbilityReady(Ability.DemonSpikes, timeShift);
@@ -802,24 +862,24 @@ function ConRO.DemonHunter.VengeanceDef(_, timeShift, currentSpell, gcd, tChosen
 		local _SoulBarrier_BUFF = ConRO:Aura(Buff.SoulBarrier, timeShift);
 
 --Rotations
-		if _DemonSpikes_RDY and _DemonSpikes_CHARGES == _DemonSpikes_MAX_CHARGES then
-			tinsert(ConRO.SuggestedDefSpells, _DemonSpikes);
-		end
+	if _DemonSpikes_RDY and _DemonSpikes_CHARGES == _DemonSpikes_MAX_CHARGES then
+		tinsert(ConRO.SuggestedDefSpells, _DemonSpikes);
+	end
 
-		if _SoulBarrier_RDY and _SoulFragments >= 5 and not _FieryBrand_DEBUFF then
-			tinsert(ConRO.SuggestedDefSpells, _SoulBarrier);
-		end
+	if _SoulBarrier_RDY and _SoulFragments >= 5 and not _FieryBrand_DEBUFF then
+		tinsert(ConRO.SuggestedDefSpells, _SoulBarrier);
+	end
 
-		if _FieryBrand_RDY and not _FieryBrand_DEBUFF and not _SoulBarrier_BUFF then
-			tinsert(ConRO.SuggestedDefSpells, _FieryBrand);
-		end
+	if _FieryBrand_RDY and not _FieryBrand_DEBUFF and not _SoulBarrier_BUFF then
+		tinsert(ConRO.SuggestedDefSpells, _FieryBrand);
+	end
 
-		if _DemonSpikes_RDY and not (_Metamorphosis_BUFF or _FieryBrand_DEBUFF) then
-			tinsert(ConRO.SuggestedDefSpells, _DemonSpikes);
-		end
+	if _DemonSpikes_RDY and not (_Metamorphosis_BUFF or _FieryBrand_DEBUFF) then
+		tinsert(ConRO.SuggestedDefSpells, _DemonSpikes);
+	end
 
-		if _Metamorphosis_RDY and not _Metamorphosis_BUFF then
-			tinsert(ConRO.SuggestedDefSpells, _Metamorphosis);
-		end
+	if _Metamorphosis_RDY and not _Metamorphosis_BUFF then
+		tinsert(ConRO.SuggestedDefSpells, _Metamorphosis);
+	end
 	return nil;
 end

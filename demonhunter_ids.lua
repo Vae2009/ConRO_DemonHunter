@@ -1,44 +1,42 @@
 local ConRO_DemonHunter, ids = ...;
 
 --General
-	ids.Racial = {
-		ArcaneTorrent = {spellID = 50613},
-		Shadowmeld = {spellID = 58984},
-	}
-	ids.HeroSpec = {
-		FelScarred = 34,
-		AldrachiReaver = 35,
-	}
+ids.racial = {
+	ArcaneTorrent = {spellID = 50613},
+	Shadowmeld = {spellID = 58984},
+}
+ids.hero_spec = {
+	FelScarred = 34,
+	AldrachiReaver = 35,
+}
 
---Havoc
-	ids.Havoc_Ability = {
-	--Demon Hunter Baseline
-		Disrupt = {spellID = 183752},
-		Glide = {spellID = 131347},
-		ImmolationAura = {spellID = 258920},
-		Metamorphosis = {spellID = 191427},
-		SpectralSight = {spellID = 188501},
-		ThrowGlaive = {spellID = 185123},
-		Torment = {spellID = 185245},
-		--Passive
-		ChaosBrand = {spellID = 255260},
-		DoubleJump = {spellID = 196055},
-	--Havoc Baseline
+ids.havoc = {
+	ability = {
+	--Baseline
 		BladeDance = {spellID = 188499},
 			DeathSweep = {spellID = 210152},
 		Blur = {spellID = 198589},
 		ChaosStrike = {spellID = 162794},
 			Annihilation = {spellID = 201427},
 		DemonsBite = {spellID = 162243},
+		Disrupt = {spellID = 183752},
 		FelEruption = {spellID = 211881},
 		FelRush = {spellID = 195072},
+		Glide = {spellID = 131347},
+		ImmolationAura = {spellID = 258920},
+		Metamorphosis = {spellID = 191427},
 		SigilofFlame = {spellID = 204596},
-		--Passive	
+		SpectralSight = {spellID = 188501},
+		ThrowGlaive = {spellID = 185123},
+		Torment = {spellID = 185245},
+	--Passive
+		ChaosBrand = {spellID = 255260},
 		DemonicAppetite = {spellID = 206478},
 		DemonicWards = {spellID = 278386},
+		DoubleJump = {spellID = 196055},
 		MasteryDemonicPresence = {spellID = 185164},
 		ShatteredSouls = {spellID = 178940},
-	--Demon Hunter
+	--Demon Hunter Talents
 		VengefulRetreat = {spellID = 198793, talentID = 112853},
 		BlazingPath = {spellID = 320416, talentID = 112928},
 		SigilofMisery = {spellID = 207684, talentID = 112859},
@@ -86,7 +84,7 @@ local ConRO_DemonHunter, ids = ...;
 		CollectiveAnguish = {spellID = 390152, talentID = 117762},
 		TheHunt = {spellID = 370965, talentID = 112837},
 		SigilofSpite = {spellID = 390163, talentID = 117755},
-	--Havoc
+	--Havoc Talents
 		EyeBeam = {spellID = 198013, talentID = 112939},
 		CriticalChaos = {spellID = 320413, talentID = 112951},
 		InsatiableHunger = {spellID = 258876, talentID = 112941},
@@ -112,13 +110,19 @@ local ConRO_DemonHunter, ids = ...;
 		LooksCanKill = {spellID = 320415, talentID = 112830},
 		DancingwithFate = {spellID = 389978, talentID = 112936},
 		GrowingInferno = {spellID = 390158, talentID = 112825},
-		UnboundChaos = {spellID = 347461, talentID = 112942},
+		exergy = {
+			passiveID = 206476,
+			talentID = 112943
+		},
+		inertia = {
+			spellID = 427640,
+			talentID = 117744
+		},
 		IsolatedPrey = {spellID = 388113, talentID = 112959},
 		FuriousGaze = {spellID = 343311, talentID = 112948},
 		SerratedGlaive = {spellID = 390154, talentID = 112934},
 		BurningWound = {spellID = 391189, talentID = 112826},
-		Momentum = {spellID = 206476, talentID = 112943},
-		Inertia = {spellID = 427640, talentID = 117744},
+		UnboundChaos = {spellID = 347461, talentID = 112942},
 		ChaosTheory = {spellID = 389687, talentID = 112958},
 		GlaiveTempest = {spellID = 342817, talentID = 117763},
 		InnerDemon = {spellID = 389693, talentID = 112947},
@@ -132,9 +136,12 @@ local ConRO_DemonHunter, ids = ...;
 		AFireInside = {spellID = 427775, talentID = 117741},
 		EssenceBreak = {spellID = 258860, talentID = 112956},
 		ShatteredDestiny = {spellID = 388116, talentID = 112954},
-		AnyMeansNeccessary = {spellID = 388114, talentID = 112828},
+		screaming_brutality = {
+			spellID = 388114,
+			talentID = 112828
+		},
 		FelBarrage = {spellID = 258925, talentID = 117742},
-	--Hero
+	--Hero Talents
 	--Aldrachi Reaver
 		ArtoftheGlaive = {spellID = 442290, talentID = 117512},
 			ReaversGlaive= {spellID = 442294, talentID = 117512},
@@ -169,8 +176,8 @@ local ConRO_DemonHunter, ids = ...;
 			AbyssalGaze = {spellID = 452497, talentID = 117498},
 			ConsumingFire = {spellID = 452487, talentID = 117498},
 			SigilofDoom = {spellID = 452490, talentID = 117498},
-	}
-	ids.Havoc_PvPTalent = {
+	},
+	pvp_talent = {
 		CleansedbyFlame = 205625,
 		ReverseMagic = 205604,
 		EyeofLeotheras = 206649,
@@ -182,53 +189,47 @@ local ConRO_DemonHunter, ids = ...;
 		CoverofDarkness = 227635,
 		MortalRush = 328725,
 		UnendingHatred = 213480,
-	}
-	ids.Havoc_Form = {
-
-	}
-	ids.Havoc_Buff = {
+	},
+	buff = {
 		ChaosBlades = 247938,
+		ConsumingFire = 427912,
 		ImmolationAura = 258920,
+		Inertia = 1215159,
 		Initiative = 391215,
 		InnerDemon = 337313,
 		Metamorphosis = 162264,
-		Momentum = 208628,
 		RendingStrike = 442442,
 		UnboundChaos = 347462,
-	}
-	ids.Havoc_Debuff = {
+	},
+	debuff = {
 		EssenceBreak = 320338,
 		SigilofFlame = 204598,
 	}
-	ids.Havoc_PetAbility = {
+}
 
-	}
-
---Vengeance
-	ids.Ven_Ability = {
-	--Demon Hunter Baseline
+ids.vengeance = {
+	ability = {
+	--Baseline
+		DemonSpikes = {spellID = 203720},
 		Disrupt = {spellID = 183752},
 		Glide = {spellID = 131347},
 		ImmolationAura = {spellID = 258920},
-		Metamorphosis = {spellID = 187827},
-		SpectralSight = {spellID = 188501},
-		ThrowGlaive = {spellID = 204157},
-		Torment = {spellID = 185245},
-		--Passive
-		ChaosBrand = {spellID = 255260},
-		DoubleJump = {spellID = 196055},
-	--Vengeance Baseline
-		DemonSpikes = {spellID = 203720},
 		InfernalStrike = {spellID = 189110},
+		Metamorphosis = {spellID = 187827},
 		Shear = {spellID = 203782},
 		SigilofFlame = {spellID = 204596},
 		SoulCleave = {spellID = 228477},
-		--Passive
+		SpectralSight = {spellID = 188501},
+		ThrowGlaive = {spellID = 204157},
+		Torment = {spellID = 185245},
+	--Passive
+		ChaosBrand = {spellID = 255260},
 		DemonicWards = {spellID = 203513},
+		DoubleJump = {spellID = 196055},
 		MasteryFelBlood = {spellID = 203747},
 		ShatteredSouls = {spellID = 204254},
 		ThickSkin = {spellID = 320380},
-	--Demon Hunter
+	--Demon Hunter Talents
 		VengefulRetreat = {spellID = 198793, talentID = 112853},
 		BlazingPath = {spellID = 320416, talentID = 112928},
 		SigilofMisery = {spellID = 207684, talentID = 112859},
@@ -276,7 +277,7 @@ local ConRO_DemonHunter, ids = ...;
 		CollectiveAnguish = {spellID = 390152, talentID = 117762},
 		TheHunt = {spellID = 370965, talentID = 112837},
 		SigilofSpite = {spellID = 390163, talentID = 117755},
-	--Vengeance
+	--Vengeance Talents
 		FelDevastation = {spellID = 212084, talentID = 112908},
 		Frailty = {spellID = 389958, talentID = 112907},
 		FieryBrand = {spellID = 204021, talentID = 112864},
@@ -322,7 +323,7 @@ local ConRO_DemonHunter, ids = ...;
 		DarkglareBoon = {spellID = 389708, talentID = 112901},
 		DowninFlames = {spellID = 389732, talentID = 112876},
 		IlluminatedSigils = {spellID = 428557, talentID = 117760},
-	--Hero
+	--Hero Talents
 	--Aldrachi Reaver
 		ArtoftheGlaive = {spellID = 442290, talentID = 117512},
 			ReaversGlaive= {spellID = 442294, talentID = 117512},
@@ -354,8 +355,8 @@ local ConRO_DemonHunter, ids = ...;
 		Flamebound = {spellID = 452413, talentID = 124009},
 		MonsterRising = {spellID = 452414, talentID = 117506},
 		DemonicIntensity = {spellID = 452415, talentID = 117498},
-	}
-	ids.Ven_PvPTalent = {
+	},
+	pvp_talent = {
 		Solitude = 211509,
 		CleansedbyFlame = 205625,
 		EverlastingHunt = 205626,
@@ -367,23 +368,19 @@ local ConRO_DemonHunter, ids = ...;
 		ReverseMagic = 205604,
 		Detainment = 205596,
 		UnendingHatred = 213480,
-	}
-	ids.Ven_Form = {
-		SoulFragments = 203981,
-	}
-	ids.Ven_Buff = {
+	},
+	buff = {
 		DemonSpikes = 203819,
 		ImmolationAura = 178740,
 		Metamorphosis = 187827,
 		RendingStrike = 442442,
 		SoulBarrier = 263648,
-	}
-	ids.Ven_Debuff = {
+		SoulFragments = 203981,
+	},
+	debuff = {
 		FieryBrand = 207771,
 		FieryDemise = 212818,
 		Frailty = 247456,
 		SigilofFlame = 204598,
-	}
-	ids.Ven_PetAbility = {
-
-	}
+	},
+}
